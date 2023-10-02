@@ -1,24 +1,58 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { apiKey } from "./config";
+import React, {useState} from 'react';
 
 function App() {
+  const [results, setResults] = useState([])
+  const search = async () => {
+    const url = 'https://corsproxy.io/?https://api.metaphor.systems/search';
+
+    const requestData = {
+      query: 'ai startups',
+      numResults: 5,
+      useAutoprompt: true,
+      type: 'neural'
+    };
+
+    const headers = {
+      'x-api-key': apiKey,
+      'Content-Type': 'application/json',
+      "Access-Control-Allow-Origin": "*"
+    };
+
+    fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(requestData)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setResults(data.results)
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+      });
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      Hello World
+      <button onClick={search}>Search</button>
+      <div>
+        {
+          results.map((result : any) => {
+            return (
+              <div key={result.title}>
+                {result.title}
+              </div>
+            )
+          })
+        }
+      </div>
     </div>
   );
 }
