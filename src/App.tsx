@@ -1,19 +1,19 @@
-import { METAPHOR_API, COHERE_API } from "./config";
+import { METAPHOR_API } from "./config";
 import React, {useState} from 'react';
 import './input.css';
 
 function App() {
   const [results, setResults] = useState([])
+  const [contents, setContents] = useState([])
   const search = async () => {
     const searchArea = document.getElementById("search-area") as HTMLTextAreaElement | null;
-    const query = searchArea?.value || '';
-
+    const query = "here is a recent news article about " + (searchArea?.value || '') + ":";
 
     const url = 'https://corsproxy.io/?https://api.metaphor.systems/search';
 
     const requestData = {
       query: query,
-      numResults: 3,
+      numResults: 1,
       useAutoprompt: true,
       type: 'neural'
     };
@@ -23,7 +23,6 @@ function App() {
       'Content-Type': 'application/json',
       "Access-Control-Allow-Origin": "*"
     };
-
     fetch(url, {
       method: 'POST',
       headers: headers,
@@ -37,6 +36,23 @@ function App() {
       })
       .then(data => {
         setResults(data.results)
+        const ids = data.results.map((result : any) => result.id)
+        const dataIds = ids.join(',')
+        const contentURL = `https://corsproxy.io/?https://api.metaphor.systems/contents?ids=${dataIds}`
+        const fetchContent = async () => {
+          fetch(contentURL, {
+            method: 'GET',
+            headers: headers,
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          }).then(data => {
+            setContents(data.contents)
+          })
+        }
+        fetchContent()
       })
       .catch(error => {
         console.error('Fetch error:', error);
@@ -53,6 +69,18 @@ function App() {
             return (
               <div key={result.id}>
                 {result.title}
+                {result.url}
+              </div>
+            )
+          })
+        }
+      </div>
+      <div>
+        {
+          contents?.map((content : any) => {
+            return (
+              <div key={content.id}>
+                {content.extract.replace( /(<([^>]+)>)/ig, '')}
               </div>
             )
           })
