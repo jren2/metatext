@@ -7,7 +7,7 @@ For example, if you read "The proposal is a gambit by Meta to navigate European 
 ### Installation
 1. To get started, ```git clone``` this repo.
 2. cd into the root directory and run ```npm install```.
-3. Add COHERE_API and METAPHOR_API keys to config.js
+3. Add COHERE_API and METAPHOR_API keys to src/config.js
 3. Run ```npm run build```
 4. In Google Chrome, go to chrome://extensions
 5. In the top right, if "Developer mode" is unchecked, check it
