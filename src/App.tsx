@@ -1,3 +1,4 @@
+// ADD YOUR API KEYS HERE
 import { METAPHOR_API, COHERE_API } from "./config";
 import React, { useState } from 'react';
 import './input.css';
@@ -6,9 +7,11 @@ import './loading.css';
 const examples = [
   'antitrust case against Google',
   'TikTok scrutiny from U.S. authorities',
-  'European Union rules that threaten to restrict meta'
+  'European Union rules that threaten to restrict meta',
+  'Apple USB-C switch',
+  'Apple and its rivals voluntary agreement in 2009 to find a uniform charging solution'
 ]
-const randomExample = Math.floor(Math.random() * 3)
+const randomExample = Math.floor(Math.random() * 5)
 
 function App() {
   const [results, setResults] = useState([])
