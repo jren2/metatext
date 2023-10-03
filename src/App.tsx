@@ -1,20 +1,25 @@
-import { apiKey } from "./config";
+import { METAPHOR_API, COHERE_API } from "./config";
 import React, {useState} from 'react';
+import './input.css';
 
 function App() {
   const [results, setResults] = useState([])
   const search = async () => {
+    const searchArea = document.getElementById("search-area") as HTMLTextAreaElement | null;
+    const query = searchArea?.value || '';
+
+
     const url = 'https://corsproxy.io/?https://api.metaphor.systems/search';
 
     const requestData = {
-      query: 'ai startups',
-      numResults: 5,
+      query: query,
+      numResults: 3,
       useAutoprompt: true,
       type: 'neural'
     };
 
     const headers = {
-      'x-api-key': apiKey,
+      'x-api-key': METAPHOR_API,
       'Content-Type': 'application/json',
       "Access-Control-Allow-Origin": "*"
     };
@@ -40,13 +45,13 @@ function App() {
 
   return (
     <div className="App">
-      Hello World
-      <button onClick={search}>Search</button>
+      <textarea id="search-area"></textarea>
+      <button className="search-button" onClick={() => search()}>Search</button>
       <div>
         {
           results.map((result : any) => {
             return (
-              <div key={result.title}>
+              <div key={result.id}>
                 {result.title}
               </div>
             )
