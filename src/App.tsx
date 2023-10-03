@@ -1,10 +1,40 @@
-import { METAPHOR_API } from "./config";
+import { METAPHOR_API, COHERE_API } from "./config";
 import React, {useState} from 'react';
 import './input.css';
 
 function App() {
   const [results, setResults] = useState([])
   const [contents, setContents] = useState([])
+  const [summary, setSummary] = useState("")
+  
+  const Summarize = async (text : string) => {
+    const options = {
+      "method": "POST",
+      "headers": {
+          "accept": "application/json",
+          "content-type": "application/json",
+          "authorization": "Bearer " + COHERE_API
+      },
+      "body": JSON.stringify({
+          "length": "medium",
+          "format": "bullets",
+          "model": "command",
+          "text": text,
+          "additional_command": "of this text"
+      })
+  };
+    await fetch('https://api.cohere.ai/v1/summarize', options)
+    .then((response) => response.json())
+    .then((response) => {
+        if (response.summary === undefined) {
+            return response;
+        } else {
+          setSummary(response.summary)
+          return response;
+        }
+    });
+  }
+
   const search = async () => {
     const searchArea = document.getElementById("search-area") as HTMLTextAreaElement | null;
     const query = "here is a recent news article about " + (searchArea?.value || '') + ":";
@@ -48,8 +78,10 @@ function App() {
               throw new Error('Network response was not ok');
             }
             return response.json();
-          }).then(data => {
+          }).then(async data => {
             setContents(data.contents)
+            const fullContent = data.contents.map((content : any) => content.extract.replace( /(<([^>]+)>)/ig, '')).join(' ')
+            await Summarize(fullContent)
           })
         }
         fetchContent()
@@ -76,15 +108,7 @@ function App() {
         }
       </div>
       <div>
-        {
-          contents?.map((content : any) => {
-            return (
-              <div key={content.id}>
-                {content.extract.replace( /(<([^>]+)>)/ig, '')}
-              </div>
-            )
-          })
-        }
+        {summary}
       </div>
     </div>
   );
