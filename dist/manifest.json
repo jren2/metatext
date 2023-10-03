@@ -1,0 +1,19 @@
+{
+  "version": "0.7",
+  "manifest_version": 3,
+  "name": "Metatext",
+  "description": "A Chrome Extension for summarizing context around selected text",
+  "permissions": ["contextMenus", "activeTab", "storage"],
+  "action": {
+    "default_popup": "js/index.html",
+    "default_title": "React Chrome Extension"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
+  }
+}
